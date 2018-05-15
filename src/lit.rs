@@ -68,7 +68,7 @@ ast_enum_of_structs! {
 
         /// An integer literal: `1` or `1u16`.
         ///
-        /// Holds up to 64 bits of data. Use `LitVerbatim` for any larger
+        /// Holds up to 128 bits of data. Use `LitVerbatim` for any larger
         /// integer literal.
         ///
         /// *This type is available if Syn is built with the `"derive"` or
@@ -226,27 +226,27 @@ impl LitChar {
 }
 
 impl LitInt {
-    pub fn new(value: u64, suffix: IntSuffix, span: Span) -> Self {
+    pub fn new(value: u128, suffix: IntSuffix, span: Span) -> Self {
         let mut token = match suffix {
             IntSuffix::Isize => Literal::isize_suffixed(value as isize),
             IntSuffix::I8 => Literal::i8_suffixed(value as i8),
             IntSuffix::I16 => Literal::i16_suffixed(value as i16),
             IntSuffix::I32 => Literal::i32_suffixed(value as i32),
             IntSuffix::I64 => Literal::i64_suffixed(value as i64),
-            IntSuffix::I128 => value::to_literal(&format!("{}i128", value)),
+            IntSuffix::I128 => Literal::i128_suffixed(value as i128),
             IntSuffix::Usize => Literal::usize_suffixed(value as usize),
             IntSuffix::U8 => Literal::u8_suffixed(value as u8),
             IntSuffix::U16 => Literal::u16_suffixed(value as u16),
             IntSuffix::U32 => Literal::u32_suffixed(value as u32),
-            IntSuffix::U64 => Literal::u64_suffixed(value),
-            IntSuffix::U128 => value::to_literal(&format!("{}u128", value)),
-            IntSuffix::None => Literal::u64_unsuffixed(value),
+            IntSuffix::U64 => Literal::u64_suffixed(value as u64),
+            IntSuffix::U128 => Literal::u128_suffixed(value),
+            IntSuffix::None => Literal::u128_unsuffixed(value),
         };
         token.set_span(span);
         LitInt { token: token }
     }
 
-    pub fn value(&self) -> u64 {
+    pub fn value(&self) -> u128 {
         value::parse_lit_int(&self.token.to_string()).unwrap()
     }
 
@@ -939,7 +939,7 @@ mod value {
         }
     }
 
-    pub fn parse_lit_int(mut s: &str) -> Option<u64> {
+    pub fn parse_lit_int(mut s: &str) -> Option<u128> {
         let base = match (byte(s, 0), byte(s, 1)) {
             (b'0', b'x') => {
                 s = &s[2..];
@@ -957,13 +957,13 @@ mod value {
             _ => unreachable!(),
         };
 
-        let mut value = 0u64;
+        let mut value = 0u128;
         loop {
             let b = byte(s, 0);
             let digit = match b {
-                b'0'...b'9' => u64::from(b - b'0'),
-                b'a'...b'f' if base > 10 => 10 + u64::from(b - b'a'),
-                b'A'...b'F' if base > 10 => 10 + u64::from(b - b'A'),
+                b'0'...b'9' => u128::from(b - b'0'),
+                b'a'...b'f' if base > 10 => 10 + u128::from(b - b'a'),
+                b'A'...b'F' if base > 10 => 10 + u128::from(b - b'A'),
                 b'_' => {
                     s = &s[1..];
                     continue;

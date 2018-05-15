@@ -665,7 +665,7 @@ impl Hash for Index {
 #[cfg(feature = "full")]
 ast_struct! {
     /// The `::<>` explicit type parameters passed to a method call:
-    /// `parse::<u64>()`.
+    /// `parse::<u128>()`.
     ///
     /// *This type is available if Syn is built with the `"full"` feature.*
     pub struct MethodTurbofish {
@@ -758,7 +758,7 @@ ast_enum! {
 
 #[cfg(feature = "full")]
 ast_struct! {
-    /// A local `let` binding: `let x: u64 = s.parse()?`.
+    /// A local `let` binding: `let x: u128 = s.parse()?`.
     ///
     /// *This type is available if Syn is built with the `"full"` feature.*
     pub struct Local {
@@ -3192,7 +3192,7 @@ mod printing {
 
     impl ToTokens for Index {
         fn to_tokens(&self, tokens: &mut Tokens) {
-            let mut lit = Literal::i64_unsuffixed(i64::from(self.index));
+            let mut lit = Literal::i128_unsuffixed(i128::from(self.index));
             lit.set_span(self.span);
             tokens.append(lit);
         }

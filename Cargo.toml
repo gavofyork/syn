@@ -30,7 +30,7 @@ proc-macro = ["proc-macro2/proc-macro", "quote/proc-macro"]
 
 [dependencies]
 proc-macro2 = { git = "https://github.com/gavofyork/proc-macro2.git", default-features = false }
-proc-macro2 = { git = "https://github.com/gavofyork/quote.git", optional = true, default-features = false }
+quote = { git = "https://github.com/gavofyork/quote.git", optional = true, default-features = false }
 unicode-xid = "0.1"
 
 [dev-dependencies]
